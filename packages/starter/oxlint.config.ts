@@ -1,11 +1,7 @@
 import all from '@systemfsoftware/all'
 import { defineConfig } from 'oxlint'
 
-// The plugin package's own lint surface: the aggregate house preset, the
-// strict TS tier the monorepo layers on top of correctness (a condition that
-// cannot change the outcome is a dead branch, `if (x)` on `boolean | undefined`
-// hides absent-vs-false, and `!` asserts away the null the type system warns
-// about), and the exemptions this package's own shapes require.
+// House lint surface: the aggregate preset plus the strict TS tier.
 export default defineConfig({
   extends: [all],
 
@@ -17,17 +13,13 @@ export default defineConfig({
 
   overrides: [
     {
-      // Gherkin step bodies call expect outside test/it — the house base
-      // carries the same exemption for its gherkin-spec suites. An override
-      // because the preset's test-hygiene overrides outrank top-level rules.
+      // Gherkin step bodies call expect outside test/it.
       files: ['**/*.test.ts', '**/*.spec.ts'],
       rules: { 'vitest/no-standalone-expect': 'off' },
     },
     {
-      // Node-side tooling reads the build graph, and the host adapter is the
-      // one sanctioned node:os seam; the node:-import ban governs source, and
-      // none of these files are source.
-      files: ['**/vitest.config.ts', '**/tsdown.config.ts', '**/internal/host-env.ts'],
+      // Build configs are not source: exempt from the node:-import ban.
+      files: ['**/vitest.config.ts', '**/tsdown.config.ts'],
       rules: { 'no-restricted-imports': 'off' },
     },
   ],
