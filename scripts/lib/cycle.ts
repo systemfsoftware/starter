@@ -1,4 +1,5 @@
 import { join } from '@std/path'
+import { isPublishablePackage, loadWorkspacePackages, type Pkg } from './packages.ts'
 import { run } from './run.ts'
 
 export type CycleEntry = {
@@ -8,23 +9,18 @@ export type CycleEntry = {
   changelog: string
 }
 
-type Pkg = {
-  name?: string
-  version?: string
-  private?: boolean
-}
-
-export const loadWorkspaceCycle = async (): Promise<CycleEntry[]> => {
-  const pkgs = JSON.parse(await run('pnpm', ['ls', '-r', '--json', '--depth=-1'])) as Pkg[]
-  const remote = new Set(
+export const remoteTags = async (): Promise<Set<string>> =>
+  new Set(
     (await run('git', ['ls-remote', '--tags', 'origin']))
       .split('\n')
       .filter(Boolean)
       .map((line) => line.replace(/.*refs\/tags\//, '').replace(/\^\{\}$/, '')),
   )
+
+export const cycleOf = (pkgs: Pkg[], remote: Set<string>): CycleEntry[] => {
   const cycle: CycleEntry[] = []
   for (const pkg of pkgs) {
-    if (!pkg.name || !pkg.version || pkg.private) continue
+    if (!isPublishablePackage(pkg)) continue
     const tag = `${pkg.name}@v${pkg.version}`
     if (remote.has(tag)) continue
     cycle.push({
@@ -35,6 +31,11 @@ export const loadWorkspaceCycle = async (): Promise<CycleEntry[]> => {
     })
   }
   return cycle
+}
+
+export const loadWorkspaceCycle = async (): Promise<CycleEntry[]> => {
+  const [pkgs, remote] = await Promise.all([loadWorkspacePackages(), remoteTags()])
+  return cycleOf(pkgs, remote)
 }
 
 export const loadCaptured = async (path: string): Promise<CycleEntry[]> => {

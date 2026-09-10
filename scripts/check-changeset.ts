@@ -4,6 +4,7 @@ import { withoutAll } from '@std/collections/without-all'
 import { extractYaml, test } from '@std/front-matter'
 import { expandGlob } from '@std/fs/expand-glob'
 import { basename } from '@std/path'
+import { isPublishablePackage, type Pkg } from './lib/packages.ts'
 import { run } from './lib/run.ts'
 
 const BUMP: Record<string, true> = { none: true, patch: true, minor: true, major: true }
@@ -18,12 +19,8 @@ const intentPackages = (markdown: string) => {
 const publicPackages = async () => {
   const names: string[] = []
   for await (const file of expandGlob('packages/*/package.json')) {
-    const pkg = JSON.parse(await Deno.readTextFile(file.path)) as {
-      name?: string
-      version?: string
-      private?: boolean
-    }
-    if (pkg.name && pkg.version && !pkg.private) names.push(pkg.name)
+    const pkg = JSON.parse(await Deno.readTextFile(file.path)) as Pkg
+    if (isPublishablePackage(pkg)) names.push(pkg.name)
   }
   return names
 }

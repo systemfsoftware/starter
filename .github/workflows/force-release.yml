@@ -27,6 +27,12 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+      - name: Guard · refuse a workspace with no publishable package
+        run: |
+          if [ "$(jq -r 'select(.private != true) | .name' packages/*/package.json | grep -c .)" -eq 0 ]; then
+            echo "::error::every packages/*/package.json is private; drop \"private\": true and rename the placeholder before forcing a release"
+            exit 1
+          fi
       - name: Write dummy changeset
         run: |
           cat > ".changeset/force-${{ github.run_id }}-${{ inputs.bump }}.md" <<EOF
