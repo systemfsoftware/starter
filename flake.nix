@@ -1,5 +1,5 @@
 {
-  description = "omp-claude-compat toolchain — the formatter and runtimes the check chain shells out to";
+  description = "starter toolchain — the formatter and runtimes the check chain shells out to";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
