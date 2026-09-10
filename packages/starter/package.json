@@ -24,6 +24,7 @@
   "license": "Apache-2.0",
   "name": "@TODO/starter",
   "omp": { "extensions": ["./dist/index.js"] },
+  "private": true,
   "publishConfig": { "exports": { ".": "./dist/index.js", "./package.json": "./package.json" }, "provenance": true },
   "scripts": {
     "build": "rimraf dist && tsdown",
