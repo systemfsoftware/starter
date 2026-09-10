@@ -1,5 +1,5 @@
 {
-  "compilerOptions": { "noEmit": true, "types": ["node"] },
+  "compilerOptions": { "noEmit": true, "types": ["node"], "customConditions": ["@systemfsoftware/source"] },
   "extends": "@systemfsoftware/tsconfig/tsc/no-dom/library-monorepo",
-  "include": ["src"]
+  "include": ["src", "tests"]
 }
