@@ -17,7 +17,8 @@
     "pnpm-lock.yaml",
     "coverage/**",
     "reports/**",
-    "**/snapshots/*.md"
+    "**/snapshots/*.md",
+    "repos/**"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.96.1.wasm",
