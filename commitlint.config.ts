@@ -230,6 +230,7 @@ const configuration: UserConfig = {
   },
 
   defaultIgnores: true,
+  ignores: [(commit) => commit.startsWith("Squashed '") || commit.includes('git-subtree-dir:')],
   formatter: '@commitlint/format',
 }
 
