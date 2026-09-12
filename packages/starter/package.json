@@ -12,6 +12,7 @@
     "@systemfsoftware/tsconfig": "catalog:",
     "@types/node": "catalog:",
     "effect": "catalog:",
+    "oxlint": "catalog:",
     "rimraf": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
