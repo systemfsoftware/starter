@@ -21,6 +21,10 @@ Starter template for TypeScript / Effect libraries and tools.
 | `START-3` | All test suites pass                                | `pnpm test`         |
 | `START-4` | Full CI validation passes before completion         | `pnpm check:ci`     |
 
+Workspace roots: `packages/` holds libraries, `apps/` holds publishable
+applications — both are workspace globs in `pnpm-workspace.yaml`. Turbo declares
+`dist/**` as each package's build output; `pnpm gate:dist` runs that build.
+
 ## End of Session
 
 Commit changes using conventional commits (`<type>(<scope>): <subject>`). Ensure the working tree is clean and `pnpm check:ci` passes.

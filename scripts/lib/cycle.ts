@@ -14,41 +14,37 @@ type Pkg = {
   private?: boolean
 }
 
-export const loadWorkspaceCycle = async (): Promise<CycleEntry[]> => {
+type Released = { name: string; version: string }
+
+const publicPackages = async (): Promise<Released[]> => {
   const pkgs = JSON.parse(await run('pnpm', ['ls', '-r', '--json', '--depth=-1'])) as Pkg[]
-  const remote = new Set(
-    (await run('git', ['ls-remote', '--tags', 'origin']))
-      .split('\n')
-      .filter(Boolean)
-      .map((line) => line.replace(/.*refs\/tags\//, '').replace(/\^\{\}$/, '')),
-  )
-  const cycle: CycleEntry[] = []
-  for (const pkg of pkgs) {
-    if (!pkg.name || !pkg.version || pkg.private) continue
-    const tag = `${pkg.name}@v${pkg.version}`
-    if (remote.has(tag)) continue
-    cycle.push({
-      name: pkg.name,
-      version: pkg.version,
-      tag,
-      changelog: join('.changeset', 'changelogs', `${pkg.name.replace('/', '!')}@${pkg.version}.md`),
-    })
-  }
-  return cycle
+  return pkgs
+    .filter((pkg): pkg is Pkg & Released => Boolean(pkg.name && pkg.version) && !pkg.private)
+    .map(({ name, version }) => ({ name, version }))
 }
+
+const isPublished = async (name: string, version: string): Promise<boolean> => {
+  const res = await fetch(`https://registry.npmjs.org/${encodeURIComponent(name)}/${version}`)
+  if (res.status === 404) return false
+  if (!res.ok) throw new Error(`registry returned ${res.status} for ${name}@${version}`)
+  return true
+}
+
+export const unpublishedOf = async <T extends Released>(items: T[]): Promise<T[]> => {
+  const published = await Promise.all(items.map(({ name, version }) => isPublished(name, version)))
+  return items.filter((_, i) => !published[i])
+}
+
+export const loadWorkspaceCycle = async (): Promise<CycleEntry[]> =>
+  (await unpublishedOf(await publicPackages())).map(({ name, version }) => ({
+    name,
+    version,
+    tag: `${name}@v${version}`,
+    changelog: join('.changeset', 'changelogs', `${name.replace('/', '!')}@${version}.md`),
+  }))
 
 export const loadCaptured = async (path: string): Promise<CycleEntry[]> => {
   const raw: unknown = JSON.parse(await Deno.readTextFile(path))
   if (!Array.isArray(raw)) throw new Error('captured file must be a JSON array')
   return raw as CycleEntry[]
-}
-
-export const unpublishedOf = async (cycle: CycleEntry[]) => {
-  const published = await Promise.all(
-    cycle.map(async (entry) => {
-      const res = await fetch(`https://registry.npmjs.org/${entry.name.replace('/', '%2F')}/${entry.version}`)
-      return res.ok
-    }),
-  )
-  return cycle.filter((_, i) => !published[i])
 }
