@@ -84,5 +84,4 @@ A ledger the parse must distinguish: one consumed intent, one still pending.
 
 ## Related
 
-- `CONCEPTS.md` — defines change intent, release set, release phase, and the registry probe.
 - `pnpm/pnpm#13125` — the bare-`intents:` null form, and why both pnpm stacks accept it on read.
