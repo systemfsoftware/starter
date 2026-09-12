@@ -1,0 +1,15 @@
+# One line ending everywhere. Git for Windows checks CRLF out by default, which
+# is not a cosmetic difference here: dprint reports every checkout file as
+# "Text differed by line endings" on the Windows CI job, and tests that compare
+# file text see the same drift. `text=auto` keeps binary detection; `eol=lf`
+# pins the checkout.
+* text=auto eol=lf
+
+# Binary: never normalise, never diff, never merge.
+*.png binary
+*.jpg binary
+*.ico binary
+*.icns binary
+*.dll binary
+*.so binary
+*.dylib binary

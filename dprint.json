@@ -1,5 +1,6 @@
 {
   "lineWidth": 120,
+  "newLineKind": "lf",
   "typescript": {
     "semiColons": "asi",
     "quoteStyle": "preferSingle",
