@@ -3,10 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    comment-checker = {
-      url = "github:systemfsoftware/comment-checker";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     # Hashless pnpm store: each lockfile integrity is the fetch hash.
     # fetchPnpmDeps needs a second store-wide hash that Dependabot cannot update.
     # A package built from this workspace takes this overlay to get
@@ -17,7 +13,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, comment-checker, importPnpmLock }:
+  outputs = { self, nixpkgs, importPnpmLock }:
     let
       systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
       forEachSystem = fn: nixpkgs.lib.genAttrs systems (system: fn nixpkgs.legacyPackages.${system});
@@ -27,7 +23,7 @@
         let
           pkgs' = pkgs.extend importPnpmLock.overlays.default;
           dprint = pkgs.callPackage ./nix/dprint.nix { };
-          cc = comment-checker.packages.${pkgs.system}.comment-checker;
+          cc = pkgs.callPackage ./nix/comment-checker.nix { };
           comment-checker-bwrap = pkgs.callPackage ./nix/comment-checker-bwrap.nix { comment-checker = cc; };
         in { inherit dprint comment-checker-bwrap; comment-checker = cc; default = dprint; });
 
