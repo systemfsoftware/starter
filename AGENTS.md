@@ -21,8 +21,9 @@ Starter template for TypeScript / Effect libraries and tools.
 | `START-3` | All test suites pass                                | `pnpm test`         |
 | `START-4` | Full CI validation passes before completion         | `pnpm check:ci`     |
 
-Publishable apps live under `apps/`; libraries under `packages/`. `turbo.json`
-mirrors both roots' `dist/**` as build outputs — verify with `pnpm gate:dist`.
+Workspace roots: `packages/` holds libraries, `apps/` holds publishable
+applications — both are workspace globs in `pnpm-workspace.yaml`. Turbo declares
+`dist/**` as each package's build output; `pnpm gate:dist` runs that build.
 
 ## End of Session
 

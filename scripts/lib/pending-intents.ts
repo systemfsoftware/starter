@@ -6,8 +6,7 @@ const consumedIntentStems = (ledgerYaml: string): Set<string> => {
   const parsed = parse(ledgerYaml)
   const stems = new Set<string>()
   if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) return stems
-  const ledger = parsed as Record<string, unknown>
-  for (const value of Object.values(ledger)) {
+  for (const value of Object.values(parsed)) {
     let intents: unknown
     if (Array.isArray(value)) intents = value
     else if (value !== null && typeof value === 'object' && 'intents' in value) intents = value.intents
