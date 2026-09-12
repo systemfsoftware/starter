@@ -36,13 +36,13 @@ AI coding agents produce TypeScript that compiles cleanly and passes shallow uni
 Every external interaction in a `starter` project follows the **I/O Sandwich**:
 
 ```
-read (impure) ──► decode (pure) ──► decide (pure) ──► encode (pure) ──► write (impure)
+read (impure) ──► decode (pure) ──► decide (pure) ──► shape (pure) ──► write (impure)
 ```
 
 1. 📥 **`read`** — Gathers raw input from ports and external systems.
 2. 🔍 **`decode`** — Validates unvalidated input into branded domain types using Schema.
 3. 🧠 **`decide`** — Executes domain logic with cyclomatic complexity 1 (zero I/O, zero ambient state).
-4. 📦 **`encode`** — Shapes domain decisions into pure wire documents.
+4. 📦 **`shape`** — Builds pure output documents and domain events from the decision.
 5. 📤 **`write`** — Persists changes, emits domain events, or returns responses.
 
 Phase ordering is guaranteed at compile time: each phase returns branded markers that the succeeding phase demands as input.
@@ -77,9 +77,9 @@ The repository is structured into two workspace roots defined in `pnpm-workspace
 .
 ├── packages/           # Reusable libraries, engines, and domain cores
 │   └── starter/        # Seed library template (rename to your package)
-├── apps/               # Executable applications, services, and CLI tools
+├── apps/               # Declared workspace root for apps and CLI tools (added as needed)
 ├── repos/              # Vendored subtrees (constitution, worktrunk-scripts)
-└── docs/               # Architecture decision records and solutions
+└── docs/               # Solutions, tooling decisions, and plans
 ```
 
 - [`packages/starter`](packages/starter) — The starter package scaffold with pre-configured build, lint, test, and mutation configs.
