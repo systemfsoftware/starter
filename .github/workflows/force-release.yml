@@ -3,8 +3,13 @@ name: Force Release
 on:
   workflow_dispatch:
     inputs:
+      package:
+        description: "Package to force release for (TODO: your package name)"
+        required: true
+        default: "@TODO/starter"
+        type: string
       bump:
-        description: "Release bump for @TODO/starter (TODO: your package name)"
+        description: "Release bump (patch, minor, major)"
         required: true
         default: patch
         type: choice
@@ -31,10 +36,10 @@ jobs:
         run: |
           cat > ".changeset/force-${{ github.run_id }}-${{ inputs.bump }}.md" <<EOF
           ---
-          "@TODO/starter": ${{ inputs.bump }}
+          "${{ inputs.package }}": ${{ inputs.bump }}
           ---
 
-          chore(release): force ${{ inputs.bump }} release via workflow dispatch
+          chore(release): force ${{ inputs.bump }} release for ${{ inputs.package }} via workflow dispatch
           EOF
       - name: Commit, push, and open PR
         env:

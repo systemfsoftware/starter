@@ -21,6 +21,9 @@ Starter template for TypeScript / Effect libraries and tools.
 | `START-3` | All test suites pass                                | `pnpm test`         |
 | `START-4` | Full CI validation passes before completion         | `pnpm check:ci`     |
 
+Publishable apps live under `apps/`; libraries under `packages/`. `turbo.json`
+mirrors both roots' `dist/**` as build outputs — verify with `pnpm gate:dist`.
+
 ## End of Session
 
 Commit changes using conventional commits (`<type>(<scope>): <subject>`). Ensure the working tree is clean and `pnpm check:ci` passes.
