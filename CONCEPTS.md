@@ -14,6 +14,10 @@ A file recording that a workspace package is owed a release, authored alongside 
 
 _Avoid:_ changeset — the file format is a changeset, but the concept here is the recorded intent to release.
 
+### Change-intent ledger
+
+The file `.changeset/ledger.yaml` that records which change intents a release consumed. pnpm maintains it: the recursive version command renders it after consuming intents, so no production code in this repository writes it. An entry's intent list may be empty — YAML can render that as a bare key — and empty means the release consumed no intents, never that the entry failed to parse.
+
 ### Release set
 
 The workspace packages owed a release in the current run — those whose manifest version is not yet served by the package registry. Membership is a fact about the registry, not about version control: a package leaves the set when its version is published, never when a branch advances or a tag is written.
